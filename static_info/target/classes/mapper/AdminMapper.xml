@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.codejie.pms.mapper.AdminMapper">
+
+    <insert id="add_info" parameterType="com.codejie.pms.entity.Penetr_check">
+        INSERT INTO penetr_check (
+            userName,
+            phone,
+            terminalName,
+            terminalType,
+            APPID,
+            counter,
+            currdate
+        )
+        VALUES
+        (
+            #{userName},
+            #{phone},
+            #{terminalName},
+            #{terminalType},
+            #{APPID},
+            #{counter},
+            #{currdate}
+        )
+    </insert>
+
+    <select id="select_info" parameterType="com.codejie.pms.entity.Penetr_check" resultType="com.codejie.pms.entity.Penetr_check">
+        select * from penetr_check where userName = #{userName} and phone = #{phone} and currdate = #{currdate}
+    </select>
+
+    <update id="update_info" parameterType="com.codejie.pms.entity.Penetr_check">
+        update penetr_check set terminalName = #{terminalName}, terminalType = #{terminalType}, APPID = #{APPID}, counter = #{counter} where userName = #{userName} and phone = #{phone} and currdate = #{currdate}
+    </update>
+
+</mapper>

@@ -1,0 +1,30 @@
+server:
+  #设置请求端口
+  port: 9090
+#开发配置
+spring:
+  #  resources:
+  #    static-locations: classpath:/
+  thymeleaf:
+    cache:  false
+  #数据源配置
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/gy_sys?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+#mybatis配置
+mybatis:
+  typeAliasesPackage: com.codejie.pms.entity
+  mapperLocations: classpath:mapper/*.xml
+
+# 分页配置信息
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+

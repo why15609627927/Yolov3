@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel = "icon" href = "/imgs/gy.ico">
+    <title>穿透式验证</title>
+<!--    <link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>-->
+    <link rel="stylesheet" href="/css/loginstyle.css">
+<!--    <link rel="stylesheet" href="../static/css/loginstyle.css">-->
+
+</head>
+<body>
+
+<tbody>
+<div class="box">
+    <div class="top">穿透式验证</div>
+<div class="content">
+    <iframe id="fraSubmit" name="fraSubmit" style="display: none;" scrolling="yes" onresize src="about:blank"></iframe>
+    <form action="" name="myForm" id="myForm" method="post" target="fraSubmit">
+        <div class="acc">
+            <span>客户名称：</span>
+            <input type="text" required="required" oninvalid="setCustomValidity('请输入客户名称')" oninput="setCustomValidity('')" name="userName" id="userName" placeholder="请输入您的客户名称">
+        </div>
+        <div class="acc">
+            <span>邮箱地址：</span>
+            <input type="text" required="required" oninvalid="setCustomValidity('请输入邮箱地址')" oninput="setCustomValidity('')" name="phone" id="phone" placeholder="请输入您的邮箱">
+        </div>
+        <div class="acc">
+            <span>终端名称：</span>
+            <input type="text" required="required" oninvalid="setCustomValidity('请输入终端名称')" oninput="setCustomValidity('')" name="terminalName" id="terminalName" placeholder="请输入您的终端名称">
+
+        </div>
+        <div class="accRa">
+            <span>终端类型：&nbsp;&nbsp;</span>
+            <input type="radio" name="terminalType" id="terminalType_1" value="直连">&nbsp;直连&nbsp;&nbsp;
+            <input type="radio" name="terminalType" id="terminalType_2" value="一对多中继">&nbsp;一对多中继&nbsp;&nbsp;
+            <input type="radio" name="terminalType" id="terminalType_3" value="多对多中继">&nbsp;多对多中继
+        </div>
+        <div class="acc">
+            <span>APPID：&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <input type="text" required="required" oninvalid="setCustomValidity('请输入APPID')" oninput="setCustomValidity('')" name="APPID" id="APPID" placeholder="请输入您的APPID">
+        </div>
+        <div class="acc">
+            <span>接入柜台：</span>
+            <select id="counter">
+                <option value="ctp">CTP</option>
+                <option value="other">其他</option>
+            </select>
+
+        </div>
+        <div class="accSh">
+            <input type="text" value="" placeholder="请输入验证码（区分大小写）"
+                   style="height:43px;position: relative; top:-15px; font-size:20px;"id ="text">
+            <canvas id="canvas" width="100" height="43" onclick="dj()"
+                    style="border: 1px solid #ccc;
+        border-radius: 5px;"></canvas>
+        </div>
+<!--        点击事件-->
+        <input id="commited" class="submit" type="submit"  value="提交" onclick="formReset()">
+
+
+
+    </form>
+</div>
+</div>
+</tbody>
+<div id="myModal" class="modal" role="dialog" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="falseS">
+    <div class="modal-content">
+        <div class="modal-text">
+            <div class="modal-head">
+                客户须知
+            </div>
+            <div class="modal-body">
+            1、不允许在同一账户或同一客户实际控制的账户组间，进行合约的自买自卖<br>
+            2、不允许不以成交为目的，频繁申报并撤销申报，或者大额申报并撤销申报<br>
+            3、不允许以涨跌停板价格频繁申报并撤销申报，或者大额申报并撤销申报<br>
+            4、不允许进行申报价格持续偏离申报时市场成交价格的大额申报并撤销申报，同时进行小额多笔反向申报并成交<br>
+            5、不允许连续申报或密集申报，可能引发价格快速上涨或下跌，或者引导、强化合约交易价格趋势<br>
+            6、不允许在收盘阶段利用程序进行大量或连续交易<br>
+            </div>
+        </div>
+        <div class="shBtn">
+<!--            <div class="shBtn_l">-->
+        <input class="knowBtn1" type="button" id="closeBtn" value="我同意">
+<!--        </div>-->
+<!--            <div class="shBtn_r">-->
+        <input class="knowBtn2" type="button" id="noBtn" value="不同意" onclick="window.close();">
+<!--           </div>-->
+        </div>
+    </div>
+
+</div>
+<!--<script>-->
+<!--    window.onload=function (){-->
+<!--        var modal = document.getElementById("myModal");-->
+<!--        var closeBtn = document.getElementById("closeBtn");-->
+<!--        closeBtn.onclick=function (){-->
+<!--            modal.style.display="none";-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+<script type="text/javascript">
+
+    var show_num = [];
+    draw(show_num);
+    function dj(){
+        draw(show_num);
+    }
+    function draw(show_num) {
+        var canvas_width=document.getElementById('canvas').clientWidth;
+        var canvas_height=document.getElementById('canvas').clientHeight;
+        var canvas = document.getElementById("canvas");//获取到canvas的对象，演员
+        var context = canvas.getContext("2d");//获取到canvas画图的环境，演员表演的舞台
+        canvas.width = canvas_width;
+        canvas.height = canvas_height;
+        var sCode = "A,B,C,E,F,G,H,J,K,L,M,N,P,Q,R,S,T,W,X,Y,Z,1,2,3,4,5,6,7,8,9,0,q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x,c,v,b,n,m";
+        var aCode = sCode.split(",");
+        var aLength = aCode.length;//获取到数组的长度
+
+        for (var i = 0; i <= 3; i++) {
+            var j = Math.floor(Math.random() * aLength);//获取到随机的索引值
+            var deg = Math.random() * 30 * Math.PI / 180;//产生0~30之间的随机弧度
+            var txt = aCode[j];//得到随机的一个内容
+            show_num[i] = txt;
+            var x = 10 + i * 20;//文字在canvas上的x坐标
+            var y = 20 + Math.random() * 8;//文字在canvas上的y坐标
+            context.font = "bold 23px 微软雅黑";
+
+            context.translate(x, y);
+            context.rotate(deg);
+
+            context.fillStyle = randomColor();
+            context.fillText(txt, 0, 0);
+
+            context.rotate(-deg);
+            context.translate(-x, -y);
+        }
+        for (var i = 0; i <= 5; i++) { //验证码上显示线条
+            context.strokeStyle = randomColor();
+            context.beginPath();
+            context.moveTo(Math.random() * canvas_width, Math.random() * canvas_height);
+            context.lineTo(Math.random() * canvas_width, Math.random() * canvas_height);
+            context.stroke();
+        }
+        for (var i = 0; i <= 30; i++) { //验证码上显示小点
+            context.strokeStyle = randomColor();
+            context.beginPath();
+            var x = Math.random() * canvas_width;
+            var y = Math.random() * canvas_height;
+            context.moveTo(x, y);
+            context.lineTo(x + 1, y + 1);
+            context.stroke();
+        }
+    }
+    function randomColor() {//得到随机的颜色值
+        var r = Math.floor(Math.random() * 256);
+        var g = Math.floor(Math.random() * 256);
+        var b = Math.floor(Math.random() * 256);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
+
+    function formReset() {
+        //调用成功
+        var userName = $("#userName").val();   //客户名称
+        var phone = $("#phone").val();  //联系方式
+        var terminalName = $("#terminalName").val();  //终端名称
+        var terminalType;  //终端类型
+        var terminalType_1=$('input:radio[id="terminalType_1"]:checked').val();
+        var terminalType_2=$('input:radio[id="terminalType_2"]:checked').val();
+        var terminalType_3=$('input:radio[id="terminalType_3"]:checked').val();
+        if(terminalType_1){
+            terminalType = '直连';
+        }
+        if(terminalType_2){
+            terminalType = '一对多中继';
+        }
+        if(terminalType_3){
+            terminalType = '多对多中继';
+        }
+        var APPID = $("#APPID").val();  //APPID
+        var counter=$("#counter option:selected");
+        var val=document.getElementById("text").value;
+        var num = show_num.join("");
+        var phone = document.getElementById("phone").value;
+        var emailRegExp=/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;//验证邮箱的正则表达式
+        var ok=emailRegExp.test(phone);//验证是否符合要求
+        if (ok){
+
+        }else {
+            alert("邮箱格式不正确！");
+            return false;
+            document.getElementById("myForm").reset();
+        }
+
+        if(val==''){
+            alert('请输入验证码！');
+        }
+
+        else if(val == num){
+            $.ajax({
+                url: "/admin/select_info",
+                type: "post",
+                data: {
+                    "userName": userName, //参数1
+                    "phone": phone, //参数2
+                },
+                dataType: "json",
+                async: true,                   //是否异步请求
+                success: function (data) {
+                    if(data){
+                        $.ajax({
+                            url: "/admin/add_info",
+                            type: "post",
+                            data: {
+                                "userName": userName, //参数1
+                                "phone": phone, //参数2
+                                "terminalName": terminalName, //参数3
+                                "terminalType": terminalType, //参数4
+                                "APPID": APPID, //参数5
+                                "counter": counter.val(), //参数6
+                                // "macAddress": macAddress, //参数1
+                            },
+                            dataType: "json",
+                            async: true,                   //是否异步请求
+                            success: function (data) {
+
+                                if (data) {
+                                    alert("提交成功！");
+                                    document.getElementById("myForm").reset();
+                                    document.getElementById("text").value='';
+                                    draw(show_num);
+                                } else {
+                                    alert("提交失败！");
+                                    document.getElementById("myForm").reset();
+                                    document.getElementById("text").value='';
+                                    draw(show_num);
+                                }
+                            }
+                        });
+                    }else{
+                        var x;
+                        var r=confirm('您已经提交，请确认是否确认更改信息！');
+                        if (r==true){
+                            $.ajax({
+                                url: "/admin/update_info",
+                                type: "post",
+                                data: {
+                                    "userName": userName, //参数1
+                                    "phone": phone, //参数2
+                                    "terminalName": terminalName, //参数3
+                                    "terminalType": terminalType, //参数4
+                                    "APPID": APPID, //参数5
+                                    "counter": counter.val(), //参数6
+                                    // "macAddress": macAddress, //参数1
+                                },
+                                dataType: "json",
+                                async: true,                   //是否异步请求
+                                success: function (data) {
+
+                                    if (data) {
+                                        alert("信息更改成功！");
+                                        document.getElementById("myForm").reset();
+                                        document.getElementById("text").value='';
+                                        draw(show_num);
+                                    } else {
+                                        alert("信息更改失败！");
+                                        document.getElementById("myForm").reset();
+                                        document.getElementById("text").value='';
+                                        draw(show_num);
+                                    }
+                                }
+                            });
+                        }
+                        else{
+                            return false;
+                        }
+
+                    }
+                }
+            });
+            document.getElementById(".input-val").val('');
+            draw(show_num);
+        }else{
+            alert('验证码错误！');
+            document.getElementById("text").value='';
+            draw(show_num);
+        }
+
+
+
+
+    }
+
+
+</script>
+
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/popper.js/popper.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/vendor/chart.js/chart.min.js"></script>
+<script type="text/javascript" src="/js/modal.js"></script>
+<!--<script type="text/javascript" src="../static/js/modal.js"></script>-->
+
+</body>
+
+</html>
